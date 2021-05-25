@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SSWR Polling Heatmap</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<script src='https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css' rel='stylesheet' />
+
+</head>
+<style>
+	body {
+  margin: 0;
+  padding: 0;
+}
+
+h2,
+h3 {
+  margin: 10px;
+  font-size: 1.2em;
+}
+
+h3 {
+  font-size: 1em;
+}
+
+p {
+  font-size: 0.85em;
+  margin: 10px;
+  text-align: left;
+}
+
+/**
+* Create a position for the map
+* on the page */
+#map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+}
+
+/**
+* Set rules for how the map overlays
+* (information box and legend) will be displayed
+* on the page. */
+.map-overlay {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.8);
+  margin-right: 20px;
+  font-family: Arial, sans-serif;
+  overflow: auto;
+  border-radius: 3px;
+}
+
+#features {
+  top: 0;
+  height: 130px;
+  margin-top: 20px;
+  width: 260px;
+}
+
+}
+</style>
+<body>
+<div id='map'></div>
+<div class='map-overlay' id='features'><h2>SSWR Liberals Poll Map</h2><div id='pd'><p>Hover over a poll for more info</p></div></div>
+<script>
+
+	mapboxgl.accessToken = 'pk.eyJ1IjoiMjFjaGFuYXMzIiwiYSI6ImNrcDRrd2FpMTAyZHIydm53eDhnd3QzanYifQ.tf7Xc3Uw3W4aJ1CL4WKafw';
+	var map = new mapboxgl.Map({
+    	container: 'map',
+    	center: [-122.791956,49.056645],
+    	zoom: 11.5,
+    	style: 'mapbox://styles/21chanas3/ckp4obay51rgs17mzht9w4aq0/draft'
+  	});
+
+	map.on('mousemove', function(e) {
+  		var polls = map.queryRenderedFeatures(e.point, {
+  		  layers: ['output-cpc2zn']
+  		});
+		
+  		if (polls.length > 0) {
+  		  document.getElementById('pd').innerHTML = '<h3>Poll <strong>' + polls[0].properties.PDNUM + '</strong></h3><p><strong><em>' + polls[0].properties.PercentLib + '		</strong>% voted for Liberals</em></p>' + '</strong></h3><p><strong><em>' + polls[0].properties.PercentTurnout + '		</strong>% of Electors showed up</em></p>';
+  		} else {
+  		  document.getElementById('pd').innerHTML = '<p>Hover over a poll for more info</p>';
+  		}
+	});
+</script>
+
+</body>
+</html>
