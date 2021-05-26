@@ -58,14 +58,54 @@ p {
 
 #features {
   top: 0;
-  height: 130px;
+  height: 205px;
   margin-top: 20px;
   width: 260px;
 }
-
+#menu {
+background: #fff;
+position: absolute;
+z-index: 1;
+top: 10px;
+left: 10px;
+border-radius: 3px;
+width: 120px;
+border: 1px solid rgba(0, 0, 0, 0.4);
+font-family: 'Open Sans', sans-serif;
+}
+ 
+#menu a {
+font-size: 13px;
+color: #404040;
+display: block;
+margin: 0;
+padding: 0;
+padding: 10px;
+text-decoration: none;
+border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+text-align: center;
+}
+ 
+#menu a:last-child {
+border: none;
+}
+ 
+#menu a:hover {
+background-color: #f8f8f8;
+color: #404040;
+}
+ 
+#menu a.active {
+background-color: #3887be;
+color: #ffffff;
+}
+ 
+#menu a.active:hover {
+background: #3074a4;
 }
 </style>
 <body>
+<nav id="menu"></nav>
 <div id='map'></div>
 <div class='map-overlay' id='features'><h2>SSWR Liberals Poll Map</h2><div id='pd'><p>Hover over a poll for more info</p></div></div>
 <script>
@@ -75,21 +115,62 @@ p {
     	container: 'map',
     	center: [-122.791956,49.056645],
     	zoom: 11.5,
-    	style: 'mapbox://styles/21chanas3/ckp4obay51rgs17mzht9w4aq0/draft'
+    	style: 'mapbox://styles/21chanas3/ckp4obay51rgs17mzht9w4aq0'
   	});
 
 	map.on('mousemove', function(e) {
   		var polls = map.queryRenderedFeatures(e.point, {
-  		  layers: ['output-cpc2zn']
+  		  layers: ['Voter Turnout', 'Liberal Vote', 'Conservative Vote', 'NDP Vote', 'Green Vote']
   		});
 		
   		if (polls.length > 0) {
-  		  document.getElementById('pd').innerHTML = '<h3>Poll <strong>' + polls[0].properties.PDNUM + '</strong></h3><p><strong><em>' + polls[0].properties.PercentLib + '		</strong>% voted for Liberals</em></p>' + '</strong></h3><p><strong><em>' + polls[0].properties.PercentTurnout + '		</strong>% of Electors showed up</em></p>';
+  		  document.getElementById('pd').innerHTML = '<h3>Poll <strong>' + polls[0].properties.PDNUM + 
+  		  '</strong></h3><p><strong><em>' + polls[0].properties.PercentLib.toFixed(2) + '</strong>% voted for Liberals</em></p>' + 
+  		  '</strong></h3><p><strong><em>' + polls[0].properties.PercentCon.toFixed(2) + '</strong>% voted for Conservatives</em></p>'+
+  		  '</strong></h3><p><strong><em>' + polls[0].properties.PercentNDP.toFixed(2) + '</strong>% voted for NDPs</em></p>'+
+  		  '</strong></h3><p><strong><em>' + polls[0].properties.PercentGreen.toFixed(2) + '</strong>% voted for Greens</em></p>'+
+  		  '</strong></h3><p><strong><em>' + polls[0].properties.PercentTurnout.toFixed(2) + '		</strong>% of Electors showed up</em></p>';
   		} else {
   		  document.getElementById('pd').innerHTML = '<p>Hover over a poll for more info</p>';
   		}
 	});
-</script>
 
+	map.on('idle', function () {
+		// If these two layers have been added to the style,
+		// add the toggle buttons.
+		if (map.getLayer('Voter Turnout') && map.getLayer('Liberal Vote') && map.getLayer('Conservative Vote') && map.getLayer('NDP Vote') && map.getLayer('Green Vote')) {
+			var toggleableLayerIds = ['Voter Turnout', 'Liberal Vote', 'Conservative Vote', 'NDP Vote', 'Green Vote'];
+			for (var i = 0; i < toggleableLayerIds.length; i++) {
+				var id = toggleableLayerIds[i];
+				if (!document.getElementById(id)) {
+					var link = document.createElement('a');
+					link.id = id;
+					link.href = '#';
+					link.textContent = id;
+					link.className = '';
+					// Show or hide layer when the toggle is clicked.
+					link.onclick = function (e) {
+						var clickedLayer = this.textContent;
+						e.preventDefault();
+						e.stopPropagation();
+						 
+						var visibility = map.getLayoutProperty(clickedLayer,'visibility');
+						 
+						if (visibility === 'visible') {
+							map.setLayoutProperty(clickedLayer,'visibility','none');
+							this.className = '';
+						} else {
+							this.className = 'active';
+							map.setLayoutProperty(clickedLayer,'visibility','visible');
+						}
+					};
+					 
+				var layers = document.getElementById('menu');
+				layers.appendChild(link);
+			}
+		}
+		}
+		});
+</script>
 </body>
 </html>
