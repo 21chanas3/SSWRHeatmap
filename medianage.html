@@ -10,7 +10,7 @@
 
 </head>
 <style>
-	body {
+body {
   margin: 0;
   padding: 0;
 }
@@ -58,78 +58,57 @@ p {
 
 #features {
   top: 0;
-  height: 205px;
+  height: 100px;
   margin-top: 20px;
-  width: 260px;
+  width: 250px;
 }
-#menu {
-background: #fff;
-position: absolute;
-z-index: 1;
-bottom: 30px;
-left: 10px;
-border-radius: 3px;
-width: 120px;
-border: 1px solid rgba(0, 0, 0, 0.4);
-font-family: 'Open Sans', sans-serif;
+
+#legend {
+  padding: 10px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  line-height: 18px;
+  height: 150px;
+  margin-bottom: 40px;
+  width: 100px;
 }
- 
-#menu a {
-font-size: 13px;
-color: #404040;
-display: block;
-margin: 0;
-padding: 0;
-padding: 10px;
-text-decoration: none;
-border-bottom: 1px solid rgba(0, 0, 0, 0.25);
-text-align: center;
-}
- 
-#menu a:last-child {
-border: none;
-}
- 
-#menu a:hover {
-background-color: #f8f8f8;
-color: #404040;
-}
- 
-#menu a.active {
-background-color: #3887be;
-color: #ffffff;
-}
- 
-#menu a.active:hover {
-background: #3074a4;
+
+.legend-key {
+  display: inline-block;
+  border-radius: 20%;
+  width: 10px;
+  height: 10px;
+  margin-right: 5px;
 }
 </style>
 <body>
-<nav id="menu"></nav>
 <div id='map'></div>
 <div class='map-overlay' id='features'><h2>SSWR Median Age</h2><div id='pd'><p>Hover over a DA for more info</p></div></div>
 <script>
-
 	mapboxgl.accessToken = 'pk.eyJ1IjoiMjFjaGFuYXMzIiwiYSI6ImNrcDRrd2FpMTAyZHIydm53eDhnd3QzanYifQ.tf7Xc3Uw3W4aJ1CL4WKafw';
 	var map = new mapboxgl.Map({
-    	container: 'map',
-    	center: [-122.791956,49.056645],
+  		container: 'map',
+  		center: [-122.791956,49.056645],
     	zoom: 11.5,
-    	style: 'mapbox://styles/21chanas3/ckqm6y60j4hj917r1id2i4a41'
-  	});
+  		style: 'mapbox://styles/21chanas3/ckqm6y60j4hj917r1id2i4a41'
+	});
 
 	map.on('mousemove', function(e) {
-  		var da = map.queryRenderedFeatures(e.point, {
-  		  layers: ['output-6koaw4']
-  		});
-		
-  		if (da.length > 0) {
-  		  document.getElementById('pd').innerHTML = '<h3>Poll <strong>' + da[0].properties.DAUID + 
-  		  '</strong></h3><p><strong><em>' + da[0].properties.MedianAge + '</strong>% voted for Liberals</em></p>' + 
-  		} else {
-  		  document.getElementById('pd').innerHTML = '<p>Hover over a poll for more info</p>';
-  		}
+	  var das = map.queryRenderedFeatures(e.point, {
+	    layers: ['output-6koaw4']
+	  });
+
+	  if (das.length > 0) {
+	  	if(!das[0].properties.MedianAge) {
+	  		document.getElementById('pd').innerHTML = '<h3><strong> DA ' + das[0].properties.DAUID + '</strong></h3><p><strong><em> No Data Avaliable </strong></em></p>';
+	  	} else {
+	   	  document.getElementById('pd').innerHTML = '<h3><strong> DA ' + das[0].properties.DAUID + '</strong></h3><p><strong><em>' + das[0].properties.MedianAge + '</strong> years</em></p>';
+		}
+	  } else {
+	    document.getElementById('pd').innerHTML = '<p>Hover over a DA for more info</p>';
+	  }
 	});
+
+	map.getCanvas().style.cursor = 'default';
 </script>
 </body>
 </html>
