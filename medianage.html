@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SSWR Riding Median Age</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<script src='https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css' rel='stylesheet' />
+
+</head>
+<style>
+	body {
+  margin: 0;
+  padding: 0;
+}
+
+h2,
+h3 {
+  margin: 10px;
+  font-size: 1.2em;
+}
+
+h3 {
+  font-size: 1em;
+}
+
+p {
+  font-size: 0.85em;
+  margin: 10px;
+  text-align: left;
+}
+
+/**
+* Create a position for the map
+* on the page */
+#map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+}
+
+/**
+* Set rules for how the map overlays
+* (information box and legend) will be displayed
+* on the page. */
+.map-overlay {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.8);
+  margin-right: 20px;
+  font-family: Arial, sans-serif;
+  overflow: auto;
+  border-radius: 3px;
+}
+
+#features {
+  top: 0;
+  height: 205px;
+  margin-top: 20px;
+  width: 260px;
+}
+#menu {
+background: #fff;
+position: absolute;
+z-index: 1;
+bottom: 30px;
+left: 10px;
+border-radius: 3px;
+width: 120px;
+border: 1px solid rgba(0, 0, 0, 0.4);
+font-family: 'Open Sans', sans-serif;
+}
+ 
+#menu a {
+font-size: 13px;
+color: #404040;
+display: block;
+margin: 0;
+padding: 0;
+padding: 10px;
+text-decoration: none;
+border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+text-align: center;
+}
+ 
+#menu a:last-child {
+border: none;
+}
+ 
+#menu a:hover {
+background-color: #f8f8f8;
+color: #404040;
+}
+ 
+#menu a.active {
+background-color: #3887be;
+color: #ffffff;
+}
+ 
+#menu a.active:hover {
+background: #3074a4;
+}
+</style>
+<body>
+<nav id="menu"></nav>
+<div id='map'></div>
+<div class='map-overlay' id='features'><h2>SSWR Median Age</h2><div id='pd'><p>Hover over a DA for more info</p></div></div>
+<script>
+
+	mapboxgl.accessToken = 'pk.eyJ1IjoiMjFjaGFuYXMzIiwiYSI6ImNrcDRrd2FpMTAyZHIydm53eDhnd3QzanYifQ.tf7Xc3Uw3W4aJ1CL4WKafw';
+	var map = new mapboxgl.Map({
+    	container: 'map',
+    	center: [-122.791956,49.056645],
+    	zoom: 11.5,
+    	style: 'mapbox://styles/21chanas3/ckqm6y60j4hj917r1id2i4a41'
+  	});
+
+	map.on('mousemove', function(e) {
+  		var da = map.queryRenderedFeatures(e.point, {
+  		  layers: ['output-6koaw4']
+  		});
+		
+  		if (da.length > 0) {
+  		  document.getElementById('pd').innerHTML = '<h3>Poll <strong>' + da[0].properties.DAUID + 
+  		  '</strong></h3><p><strong><em>' + da[0].properties.MedianAge + '</strong>% voted for Liberals</em></p>' + 
+  		} else {
+  		  document.getElementById('pd').innerHTML = '<p>Hover over a poll for more info</p>';
+  		}
+	});
+</script>
+</body>
+</html>
